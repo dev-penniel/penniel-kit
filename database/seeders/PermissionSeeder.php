@@ -37,7 +37,7 @@ class PermissionSeeder extends Seeder
         }
         
         // create roles and assighn permisisons
-        // $role = Role::create(['name' => 'General Admin']);
-        // $role->givePermissionTo(Permission::all());
+        $role = Role::create(['name' => 'General Admin']);
+        $role->givePermissionTo(Permission::all());
     }
 }

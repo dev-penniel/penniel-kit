@@ -12,9 +12,9 @@ Route::livewire('/roles', 'pages::roles.index' )->name('roles');
 Route::livewire('/roles/create', 'pages::roles.create' )->name('roles.create');
 Route::livewire('/role/{id}', 'pages::roles.edit' )->name('roles.edit');
 
-Route::livewire('/users', 'pages::users.index' )->name('roles');
-Route::livewire('/users/create', 'pages::users.create' )->name('roles.create');
-Route::livewire('/user/{id}', 'pages::user.edit' )->name('roles.edit');
+Route::livewire('/users', 'pages::users.index' )->name('users');
+Route::livewire('/users/create', 'pages::users.create' )->name('users.create');
+Route::livewire('/user/{id}', 'pages::users.edit' )->name('user.edit');
 
 
 require __DIR__.'/settings.php';
