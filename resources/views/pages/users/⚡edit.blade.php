@@ -16,7 +16,13 @@ new class extends Component {
     public function mount($id): Void
     {
 
-        $this->user = User::find($id);
+         // Authorisation check
+        abort_unless(
+            auth()->user()->can('edit-users'),
+            403,
+        );
+
+        $this->user = User::findOrFail($id);
         $this->allRoles = Role::latest()->get();
 
         // Get current user role
@@ -28,18 +34,27 @@ new class extends Component {
 
     }
 
-    public function updateUser($id)
+    public function updateUser()
     {
 
-        $user = User::find($id);
+        // Authorisation check
+        abort_unless(
+            auth()->user()->can('edit-users'),
+            403
+        );
+
+        $user = User::findOrFail($id);
 
         $validated = $this->validate([
             'name' => ['string', 'max:255'],
             'password' => ['string', 'confirmed', Rules\Password::defaults()],
+            'selectedRole' => ['required', 'exists:roles,name'],
         ]);
 
-        if($validated['password']){
-            $validated['password'] = hash::make($validated['password']);
+        if (!empty($validated['password'])) {
+            $validated['password'] = Hash::make($validated['password']);
+        } else {
+            unset($validated['password']);
         }
 
         $user->fill($validated);
@@ -75,7 +90,7 @@ new class extends Component {
             </div>
             <flux:separator variant="subtle" />
         </div>
-        <form wire:submit.prevent="updateUser({{ $id }})" >
+        <form wire:submit.prevent="updateUser" >
             <div class="flex gap-5 mb-5">
                 <flux:input
                     wire:model="name"
@@ -126,7 +141,7 @@ new class extends Component {
     
                 <div
                     x-data="{ show: false }"
-                    x-on:role-created.window="show = true; setTimeout(() => show = false, 3000)"
+                    x-on:user-updated.window="show = true; setTimeout(() => show = false, 3000)"
                 >
                     <span x-show="show" x-transition>
                         {{ __('Saved.') }}

@@ -8,19 +8,42 @@ new class extends Component {
     
     public $search = '';
 
+    public function mount(): Void
+    {
+        // Authorisation check
+        abort_unless(
+            auth()->user()->can('access-users'),
+            403
+        );
+    }
+
     #[On('user-deleted')]
     public function getUsersProperty()
     {
         return User::when($this->search, function ($query){
-            $query->where('name', 'like', '%'.$this->search.'%')
+
+            $query->where(function ($query){
+
+                $query->where('name', 'like', '%'.$this->search.'%')
                   ->orWhere('email', 'like', '%'.$this->search.'%')
                   ->orWhere('created_at', 'like', '%'.$this->search.'%');
-        })->latest()->paginate(10);
+            });
+            
+        })
+        ->latest()
+        ->paginate(10);
     }
     
 
     public function deleteUser($is): Void
     {
+
+        // Authorisation check
+        abort_unless(
+            auth()->user()->can('access-users'),
+            403
+        );
+
         $user = User::find($is);
 
         $user->delete();

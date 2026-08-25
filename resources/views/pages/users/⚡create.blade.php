@@ -18,16 +18,30 @@ new class extends Component {
     #[On('user-created')]
     public function mount(): Void
     {
+
+        // Authorisation check
+        abort_unless(
+            auth()->user()->can('create-users'),
+            403
+        );
+
         $this->allRoles = Role::latest()->get();
     }
 
     public function createUser(): void
     {
 
+        // Authorisation check
+        abort_unless(
+            auth()->user()->can('create-users'),
+            403
+        );
+
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
+            'selectedRole' => ['required', 'exists:roles,name'],
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
@@ -120,7 +134,7 @@ new class extends Component {
     
                 <div
                     x-data="{ show: false }"
-                    x-on:role-created.window="show = true; setTimeout(() => show = false, 3000)"
+                    x-on:user-created.window="show = true; setTimeout(() => show = false, 3000)"
                 >
                     <span x-show="show" x-transition>
                         {{ __('Saved.') }}

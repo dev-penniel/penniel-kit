@@ -17,18 +17,18 @@ class PermissionSeeder extends Seeder
         // Create permissions
 
         $permissions = [
-            'role-list',
-            'role-create',
-            'role-edit',
-            'role-delete',
-            'product-list',
-            'product-create',
-            'product-edit',
-            'product-delete',
-            'user-list',
-            'user-create',
-            'user-edit',
-            'user-delete',
+            'access-roles',
+            'create-roles',
+            'edit-roles',
+            'delete-roles',
+            'access-products',
+            'create-products',
+            'edit-products',
+            'delete-products',
+            'access-users',
+            'create-users',
+            'edit-users',
+            'delete-users',
         ];
 
         foreach($permissions as $key => $permission)
