@@ -34,7 +34,7 @@ new class extends Component {
 
     }
 
-    public function updateUser()
+    public function updateUser($id)
     {
 
         // Authorisation check
@@ -47,7 +47,7 @@ new class extends Component {
 
         $validated = $this->validate([
             'name' => ['string', 'max:255'],
-            'password' => ['string', 'confirmed', Rules\Password::defaults()],
+            'password' => ['nullable', 'string', 'confirmed', Rules\Password::defaults()],
             'selectedRole' => ['required', 'exists:roles,name'],
         ]);
 
@@ -90,7 +90,7 @@ new class extends Component {
             </div>
             <flux:separator variant="subtle" />
         </div>
-        <form wire:submit.prevent="updateUser" >
+        <form wire:submit.prevent="updateUser({{ $user->id }})" >
             <div class="flex gap-5 mb-5">
                 <flux:input
                     wire:model="name"

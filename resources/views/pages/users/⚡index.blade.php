@@ -20,31 +20,45 @@ new class extends Component {
     #[On('user-deleted')]
     public function getUsersProperty()
     {
-        return User::when($this->search, function ($query){
+        return User::query()
 
-            $query->where(function ($query){
-
-                $query->where('name', 'like', '%'.$this->search.'%')
-                  ->orWhere('email', 'like', '%'.$this->search.'%')
-                  ->orWhere('created_at', 'like', '%'.$this->search.'%');
+        // Hide super-admin from everyone except super-admin
+        ->when(!auth()->user()->hasRole('General Admin'), function ($query) {
+            $query->whereDoesntHave('roles', function ($query) {
+                $query->where('name', 'General Admin');
             });
-            
         })
+
+        // Search
+        ->when($this->search, function ($query) {
+            $query->where(function ($query) {
+                $query->where('name', 'like', '%' . $this->search . '%')
+                    ->orWhere('email', 'like', '%' . $this->search . '%')
+                    ->orWhere('created_at', 'like', '%' . $this->search . '%');
+            });
+        })
+
         ->latest()
         ->paginate(10);
     }
     
 
-    public function deleteUser($is): Void
+    public function deleteUser(User $user): Void
     {
 
         // Authorisation check
         abort_unless(
-            auth()->user()->can('access-users'),
+            auth()->user()->can('delete-users'),
             403
         );
 
-        $user = User::find($is);
+        if($user->is(auth()->user())) {
+            abort(403, 'You cannot delete yourself');
+        }
+
+        if ($user->hasRole('General Admin')) {
+            abort(403, 'The general admin cannot be deleted.');
+        }
 
         $user->delete();
 
@@ -114,11 +128,11 @@ new class extends Component {
                         <td class="px-5 py-2 text-sm flex gap-2 place-content-center">
                             
                             {{-- @can('user-edit') --}}
-                                <a wire:navigate href="{{ route('user.edit', $user->id) }}"><flux:icon.pencil-square class="size-5" color="green" /></a>
+                                <a wire:navigate href="{{ route('user.edit', $user) }}"><flux:icon.pencil-square class="size-5" color="green" /></a>
                             {{-- @endcan --}}
                             
                             {{-- @can('user-delete') --}}
-                                <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="deleteUser({{ $user->id }})" wire:confirm="Are you sure you want to delete?" />
+                                <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="deleteUser({{ $user }})" wire:confirm="Are you sure you want to delete?" />
                             {{-- @endcan --}}
 
 

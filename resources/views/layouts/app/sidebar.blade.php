@@ -22,15 +22,24 @@
 
 
             
-                <flux:sidebar.group :heading="__('Administration')" class="grid">
-                <flux:sidebar.nav>
-                    <flux:sidebar.item icon="user-group" wire:navigate href="{{ route('users') }}" >
-                        {{ __('Users') }}
-                    </flux:sidebar.item>
+            <flux:sidebar.group :heading="__('Administration')" class="grid">
 
-                    <flux:sidebar.item icon="users" wire:navigate href="{{ route('roles') }}" >
-                        {{ __('Roles') }}
-                    </flux:sidebar.item>
+            <flux:sidebar.nav>
+
+                    @can('access-users')
+
+                        <flux:sidebar.item icon="user-group" wire:navigate href="{{ route('users') }}" >
+                            {{ __('Users') }}
+                        </flux:sidebar.item>
+
+                    @endcan
+
+                    @can('edit-users')
+                        <flux:sidebar.item icon="users" wire:navigate href="{{ route('roles') }}" >
+                            {{ __('Roles') }}
+                        </flux:sidebar.item>
+                    @endcan
+                    
                 </flux:sidebar.nav>
             </flux:sidebar.group>
             
