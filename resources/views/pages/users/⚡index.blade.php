@@ -89,7 +89,9 @@ new class extends Component {
 
         <div class="flex justify-between items-center mb-5">
             
-            <a wire:navigate href="{{ route('users.create') }}"><flux:button size="sm" variant="primary" class="btn-sm"> <flux:icon.plus class="size-5" /> Add New</flux:button></a>
+            @can('create-users')
+                <a wire:navigate href="{{ route('users.create') }}"><flux:button size="sm" variant="primary" class="btn-sm"> <flux:icon.plus class="size-5" /> Add New</flux:button></a>
+            @endcan
 
             <div class="w-50">
                 <flux:input
@@ -144,7 +146,6 @@ new class extends Component {
                 @endforeach
 
             </tbody>
-            {{-- {{ $contacts->links() }} --}}
         </table>
 
         <div class="mt-5">

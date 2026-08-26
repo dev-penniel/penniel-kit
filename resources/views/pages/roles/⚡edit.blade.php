@@ -17,7 +17,7 @@ new class extends Component {
         abort_unless(
             auth()->user()->can('edit-roles'),
             403
-        )
+        );
 
         $role = Role::findOrFail($id);
 
@@ -37,7 +37,7 @@ new class extends Component {
         abort_unless(
             auth()->user()->can('edit-roles'),
             403
-        )
+        );
 
         $role = Role::findOrFail($id);
 
