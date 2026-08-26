@@ -11,10 +11,22 @@ new class extends Component {
 
     public function mount(): Void
     {
+
+        // Authorisation check
+        abort_unless(
+            auth()->user()->can('create-roles'),
+            403
+        )
+
         $this->permissions = Permission::all();
     }
 
     public function createRole(){
+
+        abort_unless(
+            auth()->user()->can('create-roles'),
+            403
+        )
 
         $validated = $this->validate([
             'name' => ['string', 'required'],

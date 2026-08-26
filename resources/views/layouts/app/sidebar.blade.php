@@ -34,7 +34,7 @@
 
                     @endcan
 
-                    @can('edit-users')
+                    @can('access-roles')
                         <flux:sidebar.item icon="users" wire:navigate href="{{ route('roles') }}" >
                             {{ __('Roles') }}
                         </flux:sidebar.item>

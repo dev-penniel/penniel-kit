@@ -13,6 +13,12 @@ new class extends Component {
 
     public function mount($id): Void
     {
+
+        abort_unless(
+            auth()->user()->can('edit-roles'),
+            403
+        )
+
         $role = Role::findOrFail($id);
 
         $this->name = $role->name;
@@ -27,6 +33,11 @@ new class extends Component {
     
     public function updateRole($id)
     {
+
+        abort_unless(
+            auth()->user()->can('edit-roles'),
+            403
+        )
 
         $role = Role::findOrFail($id);
 

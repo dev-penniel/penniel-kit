@@ -3,19 +3,50 @@
 use Livewire\Attributes\On;
 use Spatie\Permission\Models\Role;
 use Livewire\Component;
+use Livewire\Attributes\Computed;
 
 new class extends Component {
 
-    public $roles;
+    public $search = '';
     
-    #[On('role-deleted')]
+    
     public function mount(): Void
     {
-        $this->roles = Role::latest()->get();
+
+        abort_unless(
+            auth()->user()->can('access-roles'),
+            403
+        );
+    }
+
+    #[computed]
+    public function roles()
+    {
+        return Role::query()
+
+            // Hide General Admin from everyone except General Admin
+            ->when(!auth()->user()->hasRole('General Admin'), function ($query) {
+                $query->where('name', '!=', 'General Admin');
+            })
+
+            // Search
+            ->when($this->search, function ($query) {
+                $query->where(function ($query) {
+                    $query->where('name', 'like', '%' . $this->search . '%');
+                });
+            })
+            ->latest()
+            ->paginate(10);
     }
 
     public function deleteRole($id)
     {
+
+        abort_unless(
+            auth()->user()->can('delete-roles'),
+            403
+        );
+
         $role = Role::findOrFail($id);
         $role->delete();
 
@@ -41,7 +72,10 @@ new class extends Component {
 
         <div class="flex justify-between items-center mb-5">
             
-            <a wire:navigate href="{{ route('roles.create') }}"><flux:button size="sm" variant="primary" class="btn-sm"> <flux:icon.plus class="size-5" /> Add New</flux:button></a>
+            @can('create-roles')
+                <a wire:navigate href="{{ route('roles.create') }}"><flux:button size="sm" variant="primary" class="btn-sm"> <flux:icon.plus class="size-5" /> Add New</flux:button></a>
+            @endcan
+            
 
             <disv class="w-50">
                 <flux:input
@@ -68,7 +102,7 @@ new class extends Component {
             </thead>
             <tbody>
 
-                @foreach ($roles as $role)
+                @foreach ($this->roles as $role)
                 
                     <tr class="border-b border-gray-300 hover:bg-gray-100">
                         <td class="px-5 py-2 text-sm">{{ $role->name }}
@@ -86,11 +120,14 @@ new class extends Component {
                         <td class="px-5 py-2 text-sm">{{ $role->updated_at }}</td> --}}
                         <td class="px-5 py-2 text-sm flex gap-2 place-content-center">
                             
-                            <a wire:navigate href="{{ route('roles.edit', $role->id) }}"><flux:icon.pencil-square class="size-5" color="green" /></a>
+                            @can('edit-roles')
+                                <a wire:navigate href="{{ route('roles.edit', $role->id) }}"><flux:icon.pencil-square class="size-5" color="green" /></a>
+                            @endcan
                             
-                            <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="deleteRole({{ $role->id }})" wire:confirm.prompt="Deleting Roles is not advised, are you sure you want to continue?\n\nType YES to confirm|YES"  />
-
-
+                            @can('delete-roles')
+                                <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="deleteRole({{ $role->id }})" wire:confirm.prompt="Deleting Roles is not advised, are you sure you want to continue?\n\nType YES to confirm|YES"  />
+                            @endcan
+                            
                             </td>
                     </tr>
 

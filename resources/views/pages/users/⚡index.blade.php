@@ -3,6 +3,8 @@
 use Livewire\Attributes\On;
 use Livewire\Component;
 use App\Models\User;
+use Livewire\Attributes\Computed;
+
 
 new class extends Component {
     
@@ -17,8 +19,8 @@ new class extends Component {
         );
     }
 
-    #[On('user-deleted')]
-    public function getUsersProperty()
+    #[computed]
+    public function users()
     {
         return User::query()
 
@@ -127,13 +129,13 @@ new class extends Component {
                         <td class="px-5 py-2 text-sm">{{ $user->created_at->format('M d, Y H:i') }}</td>
                         <td class="px-5 py-2 text-sm flex gap-2 place-content-center">
                             
-                            {{-- @can('user-edit') --}}
+                            @can('edit-users')
                                 <a wire:navigate href="{{ route('user.edit', $user) }}"><flux:icon.pencil-square class="size-5" color="green" /></a>
-                            {{-- @endcan --}}
+                            @endcan
                             
-                            {{-- @can('user-delete') --}}
+                            @can('delete-users')
                                 <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="deleteUser({{ $user }})" wire:confirm="Are you sure you want to delete?" />
-                            {{-- @endcan --}}
+                            @endcan
 
 
                             </td>
