@@ -90,7 +90,8 @@ new class extends Component {
         <div class="flex justify-between items-center mb-5">
             
             @can('create-users')
-                <a wire:navigate href="{{ route('users.create') }}"><flux:button size="sm" variant="primary" class="btn-sm"> <flux:icon.plus class="size-5" /> Add New</flux:button></a>
+            <a wire:navigate href="{{ route('users.create') }}"><flux:button size="sm" variant="primary" class="btn-sm"> <flux:icon.plus class="size-5" /> Add New</flux:button></a>
+                
             @endcan
 
             <div class="w-50">
