@@ -19,8 +19,6 @@ test('users can authenticate using the login screen', function () {
         'password' =>  'password',
     ]);
 
-    $response->dump();
-
     $response
         ->assertSessionHasNoErrors()
         ->assertRedirect(route('dashboard', absolute: false));

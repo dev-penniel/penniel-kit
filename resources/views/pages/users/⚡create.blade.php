@@ -131,7 +131,7 @@ new class extends Component {
                 <div class="flex items-center justify-end">
                     <flux:button variant="primary" type="submit" class="w-full">{{ __('Save') }}</flux:button>
                 </div>
-    
+
                 <div
                     x-data="{ show: false }"
                     x-on:user-created.window="show = true; setTimeout(() => show = false, 3000)"
@@ -142,4 +142,6 @@ new class extends Component {
                 </div>
             </div>
         </form>
+    </div>
+
     </div>

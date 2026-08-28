@@ -16,7 +16,8 @@ use Tests\TestCase;
 
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
-    ->in('Feature');
+    ->in('Feature', '../resources/views');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -48,3 +49,7 @@ function something()
 {
     // ..
 }
+
+
+
+require_once __DIR__.'/Helpers/TestHelpers.php';
