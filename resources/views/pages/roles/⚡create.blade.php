@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Livewire\Component;
@@ -16,20 +17,24 @@ new class extends Component {
         abort_unless(
             auth()->user()->can('create-roles'),
             403
-        )
+        );
 
         $this->permissions = Permission::all();
     }
 
-    public function createRole(){
+    public function createRole()
+    {
 
         abort_unless(
             auth()->user()->can('create-roles'),
             403
-        )
+        );
 
         $validated = $this->validate([
-            'name' => ['string', 'required'],
+            'name' => [
+                'string',
+                'required',
+                Rule::unique('roles', 'name')]
         ]);
 
 
@@ -55,13 +60,13 @@ new class extends Component {
                     <flux:breadcrumbs class="mb-4 mt-2">
                         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Home</flux:breadcrumbs.item>
                         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Roles</flux:breadcrumbs.item>
-                        <flux:breadcrumbs.item >Create</flux:breadcrumbs.item>
+                        <flux:breadcrumbs.item>Create</flux:breadcrumbs.item>
                     </flux:breadcrumbs>
                 </div>
             </div>
-            <flux:separator variant="subtle" />
+            <flux:separator variant="subtle"/>
         </div>
-        <form wire:submit.prevent="createRole" >
+        <form wire:submit.prevent="createRole">
             <div class="flex gap-5 mb-5">
                 <flux:input
                     wire:model="name"
@@ -73,12 +78,12 @@ new class extends Component {
                 />
 
 
-                
             </div>
 
             <div class="space-x-2">
                 @foreach ($permissions as $permission )
-                    <label for="" ><input wire:model="selectedPermissions" value="{{ $permission->name }}" type="checkbox"> {{ $permission->name }}</label>
+                    <label for=""><input wire:model="selectedPermissions" value="{{ $permission->name }}"
+                                         type="checkbox"> {{ $permission->name }}</label>
                 @endforeach
             </div>
 
@@ -86,7 +91,7 @@ new class extends Component {
                 <div class="flex items-center justify-end">
                     <flux:button variant="primary" type="submit" class="w-full">{{ __('Save') }}</flux:button>
                 </div>
-    
+
                 <div
                     x-data="{ show: false }"
                     x-on:role-created.window="show = true; setTimeout(() => show = false, 3000)"
@@ -98,3 +103,4 @@ new class extends Component {
             </div>
         </form>
     </div>
+</div>

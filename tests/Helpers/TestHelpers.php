@@ -15,6 +15,10 @@ function createGeneralAdmin(): User
         'create-users',
         'edit-users',
         'delete-users',
+        'access-roles',
+        'create-roles',
+        'edit-roles',
+        'delete-roles',
     ];
 
     $permissions = collect();
@@ -40,4 +44,14 @@ function createGeneralAdmin(): User
     $user->assignRole($role);
 
     return $user;
+}
+
+function createManagerRole(): Role
+{
+    $role = Role::create([
+        'name' => 'Manager',
+        'guard_name' => 'web',
+    ]);
+
+    return $role;
 }

@@ -1,11 +1,12 @@
 <?php
 
+use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Livewire\Component;
 
 new class extends Component {
-    
+
 
     public $permissions, $name, $id;
     public $selectedPermissions = [];
@@ -30,7 +31,7 @@ new class extends Component {
             ->toArray();
 
     }
-    
+
     public function updateRole($id)
     {
 
@@ -42,8 +43,12 @@ new class extends Component {
         $role = Role::findOrFail($id);
 
         $validated = $this->validate([
-            'name' => ['string', 'required'],
-        ]); 
+            'name' => [
+                'string',
+                'required',
+                Rule::unique('roles', 'name')
+        ],
+        ]);
 
         $role->update($validated);
 
@@ -61,20 +66,22 @@ new class extends Component {
             <div class="flex justify-between items-center">
                 <div>
                     <div class="flex gap-2 items-center">
-                        <a wire:navigate href="{{ route('roles') }}"><flux:icon.arrow-left-circle /></a>
+                        <a wire:navigate href="{{ route('roles') }}">
+                            <flux:icon.arrow-left-circle/>
+                        </a>
                         <flux:heading size="xl" level="1">{{ __('Edit Role - ') }}{{$name}}</flux:heading>
                     </div>
                     <flux:breadcrumbs class="mb-4 mt-2">
                         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Home</flux:breadcrumbs.item>
                         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Roles</flux:breadcrumbs.item>
-                        <flux:breadcrumbs.item >Edit</flux:breadcrumbs.item>
-                        <flux:breadcrumbs.item >{{ $name }}</flux:breadcrumbs.item>
+                        <flux:breadcrumbs.item>Edit</flux:breadcrumbs.item>
+                        <flux:breadcrumbs.item>{{ $name }}</flux:breadcrumbs.item>
                     </flux:breadcrumbs>
                 </div>
             </div>
-            <flux:separator variant="subtle" />
+            <flux:separator variant="subtle"/>
         </div>
-        <form wire:submit.prevent="updateRole({{ $id }})" >
+        <form wire:submit.prevent="updateRole({{ $id }})">
             <div class="flex gap-5 mb-5">
                 <flux:input
                     wire:model="name"
@@ -86,12 +93,12 @@ new class extends Component {
                 />
 
 
-                
             </div>
 
             <div class="space-x-2">
                 @foreach ($permissions as $permission )
-                    <label for="" ><input wire:model="selectedPermissions" value="{{ $permission->name }}" type="checkbox"> {{ $permission->name }}</label>
+                    <label for=""><input wire:model="selectedPermissions" value="{{ $permission->name }}"
+                                         type="checkbox"> {{ $permission->name }}</label>
                 @endforeach
             </div>
 
@@ -99,7 +106,7 @@ new class extends Component {
                 <div class="flex items-center justify-end">
                     <flux:button variant="primary" type="submit" class="w-full">{{ __('Save') }}</flux:button>
                 </div>
-    
+
                 <div
                     x-data="{ show: false }"
                     x-on:role-created.window="show = true; setTimeout(() => show = false, 3000)"
@@ -111,3 +118,4 @@ new class extends Component {
             </div>
         </form>
     </div>
+</div>
