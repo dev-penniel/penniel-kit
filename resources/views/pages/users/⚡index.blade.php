@@ -82,17 +82,18 @@ new class extends Component {
                     <flux:breadcrumbs.item >Users</flux:breadcrumbs.item>
                 </flux:breadcrumbs>
             </div>
+
+            @can('create-users')
+                <a wire:navigate href="{{ route('users.create') }}"><flux:button size="sm" variant="primary" class="btn-sm">New User</flux:button></a>
+                
+            @endcan
         </div>
+
         <flux:separator variant="subtle" />
     </div>
     <div>
 
         <div class="flex justify-between items-center mb-5">
-            
-            @can('create-users')
-                <a wire:navigate href="{{ route('users.create') }}"><flux:button size="sm" variant="primary" class="btn-sm"> <flux:icon.plus class="size-5" /> Add New</flux:button></a>
-                
-            @endcan
 
             <div class="w-50">
                 <flux:input
@@ -103,57 +104,49 @@ new class extends Component {
                     autocomplete="current-password"
                 />
             </div>
+
         </div>
 
-        <table class="table-auto w-full">
-            <thead>
-                <th>
-                    <tr class="bg-gray-100">
-                        <td class="px-5 py-3 font-bold text-sm">Names</td>
-                        <td class="px-5 py-3 font-bold text-sm">Email</td>
-                        <td class="px-5 py-3 font-bold text-sm">Role</td>
-                        <td class="px-5 py-3 font-bold text-sm">Created</td>
-                        <td class="px-5 py-3 font-bold text-sm">Actions</td>
-                    </tr>
-                </th>
-            </thead>
-            <tbody>
+
+        <flux:table>
+            <flux:table.columns>
+                <flux:table.column>Names</flux:table.column>
+                <flux:table.column>Email</flux:table.column>
+                <flux:table.column>Status</flux:table.column>
+                <flux:table.column>Role</flux:table.column>
+                <flux:table.column>Created</flux:table.column>
+                <flux:table.column>Updated</flux:table.column>
+                <flux:table.column></flux:table.column>
+            </flux:table.columns>
+
+            <flux:table.rows>
 
                 @foreach ($this->users as $user)
-                
-                    <tr class="border-b border-gray-300 hover:bg-gray-100">
-                        <td class="px-5 py-2 text-sm">{{ $user->name }}</td>
-                        <td class="px-5 py-2 text-sm">{{ $user->email }}</td>
-                        
+
+                    <flux:table.row>
+
+                        <flux:table.cell>{{ $user->name }}</flux:table.cell>
+                        <flux:table.cell>{{ $user->email }}</flux:table.cell>
+                        <flux:table.cell class="py-0"><flux:badge color="green" size="sm">Active</flux:badge></flux:table.cell>
+
                         @foreach ($user->getRoleNames() as $role)
-                            <td class="px-5 py-2 text-sm">{{ $role }} </td>
+                            <flux:table.cell variant="strong">{{ $role }}</flux:table.cell>
                         @endforeach
 
-                        <td class="px-5 py-2 text-sm">{{ $user->created_at->format('M d, Y H:i') }}</td>
-                        <td class="px-5 py-2 text-sm flex gap-2 place-content-center">
-                            
-                            @can('edit-users')
-                                <a wire:navigate href="{{ route('user.edit', $user) }}"><flux:icon.pencil-square class="size-5" color="green" /></a>
-                            @endcan
-                            
-                            @can('delete-users')
-                                <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="deleteUser({{ $user }})" wire:confirm="Are you sure you want to delete?" />
-                            @endcan
+                        <flux:table.cell>{{ $user->created_at->diffForHumans() }}</flux:table.cell>
+                        <flux:table.cell>{{ $user->updated_at->diffForHumans() }}</flux:table.cell>
 
+                        <flux:table.cell class="py-0">
+                            <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal"></flux:button>
+                        </flux:table.cell>
 
-                            </td>
-                    </tr>
+                    </flux:table.row>
 
                 @endforeach
 
-            </tbody>
-        </table>
+                
 
-        <div class="mt-5">
-
-            {{ $this->users->links() }}
-
-        </div>
-
+            </flux:table.rows>
+        </flux:table>
     </div>
 </div>
