@@ -22,14 +22,10 @@
                     {{ config('app.name', 'Laravel') }}
                 </a>
 
-                @php
-                    [$message, $author] = str(Illuminate\Foundation\Inspiring::quotes()->random())->explode('-');
-                @endphp
-
                 <div class="relative z-20 mt-auto">
                     <blockquote class="space-y-2">
-                        <flux:heading size="lg">&ldquo;{{ trim($message) }}&rdquo;</flux:heading>
-                        <footer><flux:heading>{{ trim($author) }}</flux:heading></footer>
+                        <flux:heading class="text-white" size="lg">Penniel Starter Kit</flux:heading>
+                        <footer><flux:heading class="text-white">A perfect start for your next Laravel project. Explore Penniel Kit V.1 and its awesome tools</flux:heading></footer>
                     </blockquote>
                 </div>
             </div>
