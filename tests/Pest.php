@@ -14,9 +14,12 @@ use Tests\TestCase;
 |
 */
 
+// Boot browser gui
+pest()->browser()->headed();
+
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
-    ->in('Feature', '../resources/views');
+    ->in('Feature', '../resources/views', 'Browser');
 
 
 /*

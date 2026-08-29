@@ -8,6 +8,7 @@ function createUser(): User
 {
     return User::factory()->create();
 }
+
 function createGeneralAdmin(): User
 {
     $permissionNames = [
