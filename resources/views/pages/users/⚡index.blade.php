@@ -4,11 +4,16 @@ use Livewire\Attributes\On;
 use Livewire\Component;
 use App\Models\User;
 use Livewire\Attributes\Computed;
+use Livewire\WithPagination;
 
 
 new class extends Component {
+
+    use WithPagination;
     
     public $search = '';
+    public $userId;
+    public $userName;
 
     public function mount(): Void
     {
@@ -64,7 +69,18 @@ new class extends Component {
 
         $user->delete();
 
+        $this->modal('delete-users')->close();
+
         $this->dispatch('user-deleted');
+
+    }
+
+    public function confirmDelete($id)
+    {
+        $this->userId = $id;
+        $user = User::findOrFail($id);
+        $this->userName = $user->name;
+        $this->modal('delete-users')->show();
     }
 
 
@@ -73,6 +89,26 @@ new class extends Component {
 
 
 <div>
+
+    <flux:modal name="delete-users" class="min-w-[22rem]">
+        <div class="space-y-6">
+            <div>
+                <flux:heading size="lg">Delete {{ $this->userName}}</flux:heading>
+                <flux:text class="mt-2">
+                    You're about to delete this record.<br>
+                    This action cannot be reversed.
+                </flux:text>
+            </div>
+            <div class="flex gap-2">
+                <flux:spacer />
+                <flux:modal.close>
+                    <flux:button variant="ghost">Cancel</flux:button>
+                </flux:modal.close>
+                <flux:button type="submit" variant="danger" wire:click="deleteUser({{ $userId }})">Delete Contact</flux:button>
+            </div>
+        </div>
+    </flux:modal>
+
     <div class="relative mb-6 w-full">
         <div class="flex justify-between items-center">
             <div>
@@ -84,7 +120,7 @@ new class extends Component {
             </div>
 
             @can('create-users')
-                <a wire:navigate href="{{ route('users.create') }}"><flux:button size="sm" variant="primary" class="btn-sm">New User</flux:button></a>
+                <a wire:navigate href="{{ route('users.create') }}"><flux:button icon="plus" size="sm" variant="primary" class="btn-sm">New User</flux:button></a>
                 
             @endcan
         </div>
@@ -108,8 +144,9 @@ new class extends Component {
         </div>
 
 
-        <flux:table>
+        <flux:table :paginate="$this->users">
             <flux:table.columns>
+                <flux:table.column>No:</flux:table.column>
                 <flux:table.column>Names</flux:table.column>
                 <flux:table.column>Email</flux:table.column>
                 <flux:table.column>Status</flux:table.column>
@@ -121,9 +158,13 @@ new class extends Component {
 
             <flux:table.rows>
 
-                @foreach ($this->users as $user)
+                @foreach ($this->users as $index => $user)
 
                     <flux:table.row>
+
+                        <flux:table.cell>
+                            {{ ($this->users->currentPage() - 1) * $this->users->perPage() + $index + 1 }}
+                        </flux:table.cell>
 
                         <flux:table.cell>{{ $user->name }}</flux:table.cell>
                         <flux:table.cell>{{ $user->email }}</flux:table.cell>
@@ -137,7 +178,40 @@ new class extends Component {
                         <flux:table.cell>{{ $user->updated_at->diffForHumans() }}</flux:table.cell>
 
                         <flux:table.cell class="py-0">
-                            <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal"></flux:button>
+                            <flux:dropdown align="end">
+
+                                <flux:button
+                                    variant="ghost"
+                                    size="sm"
+                                    icon="ellipsis-horizontal"
+                                />
+
+                                <flux:menu>
+
+                                    <a wire:navigate href="{{ route('user.edit', $user->id) }}">
+                                        <flux:menu.item
+                                            icon="pencil"
+                                        >
+                                            Edit
+                                        </flux:menu.item>
+                                    </a>
+
+                                    <flux:menu.separator />
+
+                                    <flux:modal.trigger name="delete-users">
+                                        <flux:menu.item
+                                            variant="danger"
+                                            icon="trash"
+                                            wire:click="confirmDelete({{ $user->id }})"
+                                        
+                                        >
+                                            Delete
+                                        </flux:menu.item>
+                                    </flux:modal.trigger>
+
+                                </flux:menu>
+
+                            </flux:dropdown>
                         </flux:table.cell>
 
                     </flux:table.row>

@@ -67,7 +67,7 @@ new class extends Component {
             </div>
 
             @can('create-roles')
-                <a wire:navigate href="{{ route('roles.create') }}"><flux:button size="sm" variant="primary" class="btn-sm">New Role</flux:button></a>
+                <a wire:navigate href="{{ route('roles.create') }}"><flux:button size="sm" icon="plus" variant="primary" class="btn-sm">New Role</flux:button></a>
             @endcan
         </div>
         <flux:separator variant="subtle" />

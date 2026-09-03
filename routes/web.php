@@ -8,8 +8,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
 });
 
-
 Route::middleware(['auth', 'verified'])->group(function () {
+
+    Route::livewire('/contacts', 'pages::contacts.index' )->name('contacts');
+    Route::livewire('/contacts/create', 'pages::contacts.create' )->name('contacts.create');
+    Route::livewire('/contact/{id}', 'pages::contacts.edit' )->name('contacts.edit');
 
     Route::livewire('/roles', 'pages::roles.index' )->name('roles');
     Route::livewire('/roles/create', 'pages::roles.create' )->name('roles.create');
