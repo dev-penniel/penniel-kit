@@ -18,6 +18,9 @@
                     <flux:sidebar.item icon="archive-box" :href="route('contacts')" :current="request()->routeIs('contacts')" wire:navigate>
                         {{ __('Contacts') }}
                     </flux:sidebar.item>
+                    <flux:sidebar.item icon="bell" :href="route('notifications')" :current="request()->routeIs('notifications')" wire:navigate>
+                        {{ __('Notifications') }}
+                    </flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>
 

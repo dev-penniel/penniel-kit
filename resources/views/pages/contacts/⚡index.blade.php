@@ -5,6 +5,7 @@ use App\Models\Contacts;
 use Livewire\Attributes\Computed;
 use Livewire\WithPagination;
 use Illuminate\Validation\Rule;
+use App\Notifications\ContactCreated;
 
 
 
@@ -53,7 +54,11 @@ new class extends Component
             'notes' => ['nullable', 'string'],
         ]);
 
-        Contacts::create($validated);
+        $contact = Contacts::create($validated);
+
+        auth()->user()->notify(
+            new ContactCreated($contact->names)
+        );
 
         $this->resetForm();
 
