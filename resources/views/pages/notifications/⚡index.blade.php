@@ -19,24 +19,52 @@ new class extends Component
             ->count();
     }
 
-    public function markAsRead(string $id)
+    public function markAsRead(string $id): void
     {
         $notification = auth()->user()
             ->notifications()
             ->findOrFail($id);
 
-        if (is_null($notification->read_at)) {
-            $notification->markAsRead();
-        }
+        $notification->markAsRead();
     }
 
-    public function markAllAsRead()
+    public function markAllAsRead(): void
     {
         auth()->user()
             ->unreadNotifications()
             ->update([
                 'read_at' => now(),
             ]);
+    }
+
+    public function getNotificationType($notification): string
+    {
+        return $notification->data['type'] ?? 'info';
+    }
+
+    public function getNotificationIcon($notification): string
+    {
+        return $notification->data['icon']
+            ?? match ($this->getNotificationType($notification)) {
+                'success' => 'check-circle',
+                'warning' => 'exclamation-triangle',
+                'danger' => 'x-circle',
+                default => 'information-circle',
+            };
+    }
+
+    public function getNotificationIconClasses($notification): string
+    {
+        if ($notification->read_at) {
+            return 'bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400';
+        }
+
+        return match ($this->getNotificationType($notification)) {
+            'success' => 'bg-green-100 text-green-600 dark:bg-green-500/10 dark:text-green-400',
+            'warning' => 'bg-yellow-100 text-yellow-600 dark:bg-yellow-500/10 dark:text-yellow-400',
+            'danger' => 'bg-red-100 text-red-600 dark:bg-red-500/10 dark:text-red-400',
+            default => 'bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400',
+        };
     }
 };
 ?>
@@ -77,6 +105,7 @@ new class extends Component
         @if ($this->unreadNotifications > 0)
 
             <div class="mb-4 flex items-center gap-2">
+
                 <flux:badge color="blue" size="sm">
                     {{ $this->unreadNotifications }} unread
                 </flux:badge>
@@ -84,6 +113,7 @@ new class extends Component
                 <flux:text size="sm">
                     notifications waiting for you
                 </flux:text>
+
             </div>
 
         @endif
@@ -94,25 +124,28 @@ new class extends Component
 
             @forelse ($this->notifications as $notification)
 
+                @php
+                    $data = $notification->data;
+                    $isUnread = is_null($notification->read_at);
+                @endphp
+
                 <div
                     wire:key="notification-{{ $notification->id }}"
                     class="group flex gap-4 border-b border-zinc-100 p-5 last:border-0 dark:border-zinc-800
-                    {{ is_null($notification->read_at)
+                    {{ $isUnread
                         ? 'bg-zinc-50/70 dark:bg-zinc-800/30'
                         : 'bg-white dark:bg-zinc-900' }}"
                 >
 
                     {{-- Icon --}}
-                    <div class="flex size-10 shrink-0 items-center justify-center rounded-full
-                        {{ is_null($notification->read_at)
-                            ? 'bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400'
-                            : 'bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400' }}">
-
+                    <div
+                        class="flex size-10 shrink-0 items-center justify-center rounded-full
+                        {{ $this->getNotificationIconClasses($notification) }}"
+                    >
                         <flux:icon
-                            name="{{ $notification->data['icon'] ?? 'bell' }}"
+                            :name="$this->getNotificationIcon($notification)"
                             class="size-5"
                         />
-
                     </div>
 
 
@@ -123,27 +156,27 @@ new class extends Component
 
                             <div class="min-w-0">
 
+                                {{-- Title --}}
                                 <div class="flex items-center gap-2">
 
                                     <flux:text
-                                        class="{{ is_null($notification->read_at)
+                                        class="{{ $isUnread
                                             ? 'font-semibold text-zinc-900 dark:text-white'
                                             : 'font-medium' }}"
                                     >
-                                        {{ $notification->data['title'] ?? 'Notification' }}
+                                        {{ $data['title'] ?? 'Notification' }}
                                     </flux:text>
 
-                                    @if (is_null($notification->read_at))
+                                    @if ($isUnread)
                                         <span class="size-2 shrink-0 rounded-full bg-blue-500"></span>
                                     @endif
 
                                 </div>
 
-                                <flux:text
-                                    size="sm"
-                                    class="mt-1"
-                                >
-                                    {{ $notification->data['message'] ?? '' }}
+
+                                {{-- Message --}}
+                                <flux:text size="sm" class="mt-1">
+                                    {{ $data['message'] ?? '' }}
                                 </flux:text>
 
                             </div>
@@ -163,7 +196,7 @@ new class extends Component
                         {{-- Actions --}}
                         <div class="mt-3 flex items-center gap-3">
 
-                            @if (is_null($notification->read_at))
+                            @if ($isUnread)
 
                                 <button
                                     type="button"
@@ -183,6 +216,24 @@ new class extends Component
                                     />
                                     Read
                                 </span>
+
+                            @endif
+
+
+                            {{-- Optional URL --}}
+                            @if (!empty($data['url']))
+
+                                <span class="text-zinc-300 dark:text-zinc-700">
+                                    •
+                                </span>
+
+                                <a
+                                    href="{{ $data['url'] }}"
+                                    wire:click="markAsRead('{{ $notification->id }}')"
+                                    class="text-xs font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
+                                >
+                                    View
+                                </a>
 
                             @endif
 

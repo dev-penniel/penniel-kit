@@ -5,7 +5,7 @@ use App\Models\Contacts;
 use Livewire\Attributes\Computed;
 use Livewire\WithPagination;
 use Illuminate\Validation\Rule;
-use App\Notifications\ContactCreated;
+use App\Notifications\SystemNotification;
 
 
 
@@ -57,7 +57,12 @@ new class extends Component
         $contact = Contacts::create($validated);
 
         auth()->user()->notify(
-            new ContactCreated($contact->names)
+            new SystemNotification(
+                title: 'New Contact',
+                message: 'Contact has been added',
+                type: 'success',
+                url: route('contacts'),
+            )
         );
 
         $this->resetForm();
