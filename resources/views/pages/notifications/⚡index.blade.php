@@ -93,7 +93,6 @@ new class extends Component
                     wire:click="markAllAsRead"
                     wire:loading.attr="disabled"
                 >
-                    <flux:icon name="check" class="size-4" />
                     Mark all as read
                 </flux:button>
             @endif
