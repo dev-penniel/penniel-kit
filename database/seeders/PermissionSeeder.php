@@ -29,6 +29,11 @@ class PermissionSeeder extends Seeder
             'create-users',
             'edit-users',
             'delete-users',
+            'access-contacts',
+            'create-contacts',
+            'edit-contacts',
+            'delete-contacts',
+            
         ];
 
         foreach($permissions as $key => $permission)

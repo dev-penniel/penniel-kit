@@ -8,6 +8,7 @@ use Livewire\Attributes\Computed;
 new class extends Component {
 
     public $search = '';
+    public $deleteRole, $roleId, $roleName;
     
     
     public function mount(): Void
@@ -42,6 +43,8 @@ new class extends Component {
     public function deleteRole($id)
     {
 
+        dd('hello');
+
         abort_unless(
             auth()->user()->can('delete-roles'),
             403
@@ -50,12 +53,43 @@ new class extends Component {
         $role = Role::findOrFail($id);
         $role->delete();
 
+        $this->modal('delete-contacts')->close();
+
         $this->dispatch('role-deleted');
+    }
+
+    public function confirmDelete($id)
+    {
+        $this->roleId = $id;
+        $role = Role::findOrFail($id);
+        $this->roleName = $role->name;
+        $this->modal('delete-contacts')->show();
     }
 
 }; ?>
 
 <div>
+
+    {{-- confirm delete modal --}}
+    <flux:modal name="delete-contacts" class="min-w-[22rem]">
+        <div class="space-y-6">
+            <div>
+                <flux:heading size="lg">Delete {{ $this->roleName }} </flux:heading>
+                <flux:text class="mt-2">
+                    You're about to delete this record.<br>
+                    This action cannot be reversed.
+                </flux:text>
+            </div>
+            <div class="flex gap-2">
+                <flux:spacer />
+                <flux:modal.close>
+                    <flux:button variant="ghost">Cancel</flux:button>
+                </flux:modal.close>
+                <flux:button type="link" variant="danger" wire:click="deleteRole({{ $roleId }})">Delete Contact</flux:button>
+            </div>
+        </div>
+    </flux:modal>
+
     <div class="relative mb-6 w-full">
         <div class="flex justify-between items-center">
             <div>
@@ -107,7 +141,7 @@ new class extends Component {
                             <div class="flex flex-col">
                                 {{ $role->name }}
 
-                                <div>
+                                <div class="flex flex-wrap">
                                     @foreach ($role->permissions as $permission)
                                         <flux:badge class="mr-2 mt-2" size="sm">{{ $permission->name }}</flux:badge>
                                     @endforeach
@@ -117,7 +151,41 @@ new class extends Component {
                         </flux:table.cell>
 
                         <flux:table.cell class="py-0">
-                            <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal"></flux:button>
+                            <flux:dropdown align="end">
+
+                                <flux:button
+                                    variant="ghost"
+                                    size="sm"
+                                    icon="ellipsis-horizontal"
+                                />
+
+                                <flux:menu>
+
+                                    <flux:modal.trigger name="edit-contact">
+
+                                        <a href="{{ route('roles.edit', $role->id) }}">
+                                            <flux:menu.item
+                                                icon="pencil"
+                                            >
+                                                Edit
+                                            </flux:menu.item>
+                                        </a>
+                                    </flux:modal.trigger>
+
+
+                                    <flux:menu.separator />
+
+                                    <flux:menu.item
+                                        variant="danger"
+                                        icon="trash"
+                                        wire:click="confirmDelete({{ $role->id }})"
+                                    >
+                                        Delete
+                                    </flux:menu.item>
+
+                                </flux:menu>
+
+                            </flux:dropdown>
                         </flux:table.cell>
 
 
