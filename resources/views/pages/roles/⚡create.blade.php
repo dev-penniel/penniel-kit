@@ -193,7 +193,7 @@ new class extends Component {
         </div>
 
         {{-- Actions --}}
-        <div class="flex items-center justify-between">
+        <div class="flex sticky bottom-0 bg-white dark:bg-zinc-900 py-5 items-center justify-between">
 
             <flux:button
                 href="{{ route('dashboard') }}"
