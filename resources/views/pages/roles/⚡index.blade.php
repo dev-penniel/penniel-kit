@@ -40,7 +40,7 @@ new class extends Component {
             ->paginate(10);
     }
 
-    public function deleteRole($id)
+    public function deleteRole()
     {
 
         dd('hello');
@@ -50,20 +50,20 @@ new class extends Component {
             403
         );
 
-        $role = Role::findOrFail($id);
+        $role = Role::findOrFail($this->roleId);
         $role->delete();
 
-        $this->modal('delete-contacts')->close();
+        $this->modal('delete-role')->close();
 
         $this->dispatch('role-deleted');
     }
 
     public function confirmDelete($id)
     {
-        $this->roleId = $id;
         $role = Role::findOrFail($id);
+        $this->roleId = $role->id;
         $this->roleName = $role->name;
-        $this->modal('delete-contacts')->show();
+        $this->modal('delete-role')->show();
     }
 
 }; ?>
@@ -71,7 +71,7 @@ new class extends Component {
 <div>
 
     {{-- confirm delete modal --}}
-    <flux:modal name="delete-contacts" class="min-w-[22rem]">
+    <flux:modal name="delete-role" class="min-w-[22rem]">
         <div class="space-y-6">
             <div>
                 <flux:heading size="lg">Delete {{ $this->roleName }} </flux:heading>
@@ -85,7 +85,7 @@ new class extends Component {
                 <flux:modal.close>
                     <flux:button variant="ghost">Cancel</flux:button>
                 </flux:modal.close>
-                <flux:button type="link" variant="danger" wire:click="deleteRole({{ $roleId }})">Delete Contact</flux:button>
+                <flux:button type="submit" variant="danger" wire:click="deleteRole">Delete Contact</flux:button>
             </div>
         </div>
     </flux:modal>

@@ -166,7 +166,7 @@ new class extends Component {
                             {{ ($this->users->currentPage() - 1) * $this->users->perPage() + $index + 1 }}
                         </flux:table.cell>
 
-                        <flux:table.cell sticky class="bg-zinc-900">{{ $user->name }}</flux:table.cell>
+                        <flux:table.cell>{{ $user->name }}</flux:table.cell>
                         <flux:table.cell>{{ $user->email }}</flux:table.cell>
                         <flux:table.cell class="py-0"><flux:badge color="green" size="sm">Active</flux:badge></flux:table.cell>
 
