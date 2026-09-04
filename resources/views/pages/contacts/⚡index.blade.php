@@ -151,7 +151,7 @@ new class extends Component
     </flux:modal>
 
     {{-- Create contacts modal --}}
-    <flux:modal name="create-category" class="md:w-full">
+    <flux:modal name="create-category" class=" md:w-full">
         <form wire:submit="createContact">
             <div class="space-y-6">
                 <div>
@@ -160,7 +160,7 @@ new class extends Component
                 </div>
     
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid md:grid-cols-2 gap-4">
 
                     <div class="flex flex-col gap-2">
                         <flux:input wire:model="names" label="Names" placeholder="Names" />
@@ -286,7 +286,7 @@ new class extends Component
 
         <flux:table :paginate="$this->contacts">
             <flux:table.columns>
-                <flux:table.column>No:</flux:table.column>
+                <flux:table.column sticky class="bg-white dark:bg-zinc-900">No:</flux:table.column>
                 <flux:table.column>Names</flux:table.column>
                 <flux:table.column>Email</flux:table.column>
                 <flux:table.column>Phone</flux:table.column>
@@ -303,7 +303,7 @@ new class extends Component
 
                     <flux:table.row>
 
-                        <flux:table.cell>
+                        <flux:table.cell sticky class="bg-white dark:bg-zinc-900">
                             {{ ($this->contacts->currentPage() - 1) * $this->contacts->perPage() + $index + 1 }}
                         </flux:table.cell>
                         <flux:table.cell>{{ $contact->names }}</flux:table.cell>
@@ -315,7 +315,7 @@ new class extends Component
                         <flux:table.cell>{{ $contact->created_at->diffForHumans() }}</flux:table.cell>
                         <flux:table.cell>{{ $contact->updated_at->diffForHumans() }}</flux:table.cell>
 
-                        <flux:table.cell class="py-0">
+                        <flux:table.cell sticky class="py-0 bg-white dark:bg-zinc-900">
                             <flux:dropdown align="end">
 
                                 <flux:button

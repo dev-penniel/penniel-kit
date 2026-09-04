@@ -146,8 +146,8 @@ new class extends Component {
 
         <flux:table :paginate="$this->users">
             <flux:table.columns>
-                <flux:table.column>No:</flux:table.column>
-                <flux:table.column>Names</flux:table.column>
+                <flux:table.column sticky class="bg-white dark:bg-zinc-900">No:</flux:table.column>
+                <flux:table.column >Names</flux:table.column>
                 <flux:table.column>Email</flux:table.column>
                 <flux:table.column>Status</flux:table.column>
                 <flux:table.column>Role</flux:table.column>
@@ -162,11 +162,11 @@ new class extends Component {
 
                     <flux:table.row>
 
-                        <flux:table.cell>
+                        <flux:table.cell sticky class="bg-white dark:bg-zinc-900">
                             {{ ($this->users->currentPage() - 1) * $this->users->perPage() + $index + 1 }}
                         </flux:table.cell>
 
-                        <flux:table.cell>{{ $user->name }}</flux:table.cell>
+                        <flux:table.cell sticky class="bg-zinc-900">{{ $user->name }}</flux:table.cell>
                         <flux:table.cell>{{ $user->email }}</flux:table.cell>
                         <flux:table.cell class="py-0"><flux:badge color="green" size="sm">Active</flux:badge></flux:table.cell>
 
@@ -177,7 +177,7 @@ new class extends Component {
                         <flux:table.cell>{{ $user->created_at->diffForHumans() }}</flux:table.cell>
                         <flux:table.cell>{{ $user->updated_at->diffForHumans() }}</flux:table.cell>
 
-                        <flux:table.cell class="py-0">
+                        <flux:table.cell sticky class="py-0 bg-white dark:bg-zinc-900">
                             <flux:dropdown align="end">
 
                                 <flux:button

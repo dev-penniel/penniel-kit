@@ -143,7 +143,14 @@ new class extends Component {
 
                                 <div class="flex flex-wrap">
                                     @foreach ($role->permissions as $permission)
-                                        <flux:badge class="mr-2 mt-2" size="sm">{{ $permission->name }}</flux:badge>
+                                        <flux:badge
+                                            size="sm"
+                                            color="zinc"
+                                            class="mr-2 mt-2 rounded-lg border border-zinc-300 bg-zinc-100 px-2.5 py-1 font-medium text-zinc-700
+                                                dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200"
+                                        >
+                                            {{ str($permission->name)->replace('-', ' ')->headline() }}
+                                        </flux:badge>
                                     @endforeach
                                 </div>
                             </div>

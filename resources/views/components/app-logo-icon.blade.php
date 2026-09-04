@@ -1,1 +1,1 @@
-P
+<img src="/fav.png" alt="">

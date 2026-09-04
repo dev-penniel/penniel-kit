@@ -194,7 +194,7 @@ new class extends Component {
                         </div>
 
 
-                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-2">
+                        <div class="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
 
                             @foreach ($permissions as $permission)
 
